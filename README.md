@@ -1,1 +1,1 @@
-# ParamericDynamicModelSelection
+# ParametricDynamicModelSelection
