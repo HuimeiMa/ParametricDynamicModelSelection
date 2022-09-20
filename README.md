@@ -9,6 +9,6 @@ Auxiliary functions:
 * SupportSet.m(Finds the support set of equation coefficients)
 * DouglasRachford.m(Optimization Routine)
 * stridge.m(Optimization Routine)
-* dudtFD.m(Velocity vector)
-Authors: Huimei Ma, Xiaofan Lu, Linan Zhang
+* dudtFD.m(Velocity vector)  
+Authors: Huimei Ma, Xiaofan Lu, Linan Zhang  
 Data: September 20, 2022
