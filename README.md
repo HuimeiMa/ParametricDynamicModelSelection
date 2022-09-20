@@ -9,4 +9,4 @@ Auxiliary functions:
 * SupportSet.m
 * DouglasRachford.m
 * stridge.m
-* dudt.m
+* dudtFD.m
