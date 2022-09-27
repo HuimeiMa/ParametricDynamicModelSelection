@@ -1,6 +1,8 @@
 # Parametric Dynamic Model Selection
 Target equation: the Lorenz 96 System 
 
+udot_{i} = f(t)*( u_{i+1} - u_{i-2} ) * u_{i-1} - u_{i} + \alpha
+
 Auxiliary functions:
  * SubsetMat.m (Indices used in cyclic permutation and restriction of the data)
  * BuildMat.m (Restriction of data matrix and velocity vector)
