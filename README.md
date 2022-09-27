@@ -1,7 +1,7 @@
 # Parametric Dynamic Model Selection
 Target equation: the Lorenz 96 System 
 
-udot_{i} = f(t)*( u_{i+1} - u_{i-2} ) * u_{i-1} - u_{i} + \alpha
+udot_{j} = f(t)*( u_{j+1} - u_{j-2} ) * u_{j-1} - u_{j} + \alpha
 
 Auxiliary functions:  
  * BuildMat.m (Restriction of data matrix and velocity vector)
