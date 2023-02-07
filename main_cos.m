@@ -9,54 +9,55 @@ set(0,'defaultaxesfontsize',13);
 %% Create the entire data.
 
 % parameters
-n = 128;
-F = 8;
-dt = 0.002;
-t = 0:dt:(100)*dt;
-Nt = length(t);
-var = 0.0001;% noise level
+N = 128;
+alpha = 8;
+delta_t = 0.002;
+t = 0:delta_t:(100)*delta_t;
+N_t = length(t);
+sigma = 0.0;% noise level
 f = @(t) -(1+cos(t));
 
 %Constructed data and velocity vector
-[u,udot,udot1] = Lorenz96Euler(n,t,f,F);
-
+[u,udot,~] = Lorenz96Euler(N,t,f,alpha,sigma);
+tilde_u = u + sigma*randn(size(u));
+udot1 = dudtFD(tilde_u,delta_t);
 %% Downsample the data.
 
 %Outputs indices used in cyclic permutation and restriction of the data
 ii = 1; % the index in the entire data for u1 of the block 
 nb = 55;% size of the block
-[indr, indc] = SubsetMat(ii, nb, n); 
+[indr, indc] = SubsetMat(ii, nb, N); 
 
 %Outputs restriction of data matrix and velocity vector
-[U, V, Udot] = BuildMat(u, udot1, udot, t, indr, indc);
+[U, V, Udot] = BuildMat(tilde_u, udot1, udot, t, indr, indc);
 %% Create the dictionary.
 
 p = 2; % degree of the basis element (p=2 or p=3)
 r = 5; % localization of the dictionary (radius of the restricted subset)
-[D,L] = Dictionary(U,p,r,indc);
-N = size(D,2);    
+[Phi,L] = Dictionary(U,p,r,indc);
+N = size(Phi,2);    
 
 % support set
 supp = SupportSet(L, indc, 'lorenz96');
 
 % Exact coefficients
-ctrue = zeros(N,Nt);
-ctrue(supp(1),:) = F;
+ctrue = zeros(N,N_t);
+ctrue(supp(1),:) = alpha;
 ctrue(supp(2),:) = -1; % u_{2}
 ctrue(supp(3),:) = f(t); % u_{2} * u_{n}
 ctrue(supp(4),:) = -f(t); % u_{n-1} * u_{1,n}
 
 %% Solve for a approximation of ctrue for each t.
 
-Cmon = zeros(N,Nt);
-for ii = 1:Nt
-    A = D((ii-1)*nb+1:ii*nb,:);
+Cmon = zeros(N,N_t);
+for ii = 1:N_t
+    A = Phi((ii-1)*nb+1:ii*nb,:);
     b1 = V((ii-1)*nb+1:ii*nb,:);
     b = Udot((ii-1)*nb+1:ii*nb,:);
    
-    sigma = 1.2 * norm(b-b1,2); % For testing purposes, in practice must be determined.
-    tau = 1; mu = 1/2; MaxIt = 1e5; tol = 1e-6; %Optimization Parameters
-    c = DouglasRachford(A,b1,sigma,tau,mu,MaxIt,tol);
+    epsilon = 1.2 * norm(b-b1,2); % For testing purposes, in practice must be determined.
+    tau = 1; mu = 1/2; MaxIt_1 = 1e5; tol = 1e-6; %Optimization Parameters
+    c = DouglasRachford(A,b1,epsilon,tau,mu,MaxIt_1,tol);
     Cmon(:, ii) = c;
 end
 
@@ -72,19 +73,19 @@ y4 = Cmon(supp(4),tt_start_ind:tt_end_ind)';
 
 theta = [ones(size(tt)) tt tt.^2 sin(tt) sin(2*tt) cos(tt) cos(2*tt) exp(tt) exp(2*tt)];
 
-MaxIt2 = 10;
+MaxIt_2 = 10;
 gamma1 = 0.00000001;
 lambda1 = 8;
-w1 = stridge(theta,y1,gamma1,lambda1,MaxIt2);
+w1 = stridge(theta,y1,gamma1,lambda1,MaxIt_2);
 gamma2 = 0.00000001;
 lambda2 = 1.1;
-w2 = stridge(theta,y2,gamma2,lambda2,MaxIt2);
+w2 = stridge(theta,y2,gamma2,lambda2,MaxIt_2);
 gamma3 = 0.000001;
 lambda3 =2;
-w3 = stridge(theta,y3,gamma3,lambda3,MaxIt2);
+w3 = stridge(theta,y3,gamma3,lambda3,MaxIt_2);
 gamma4 = 0.000001;
 lambda4 = 2;
-w4 = stridge(theta,y4,gamma4,lambda4,MaxIt2);
+w4 = stridge(theta,y4,gamma4,lambda4,MaxIt_2);
 
 %% print result
 

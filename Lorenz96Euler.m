@@ -1,4 +1,4 @@
-function [u,udot,udot1] = Lorenz96Euler(n,t,f,F)
+function [u,udot,udot1] = Lorenz96Euler(N,t,f,alpha,sigma)
 
 % ============================================================
 % Description:
@@ -14,17 +14,17 @@ function [u,udot,udot1] = Lorenz96Euler(n,t,f,F)
 %
 % Authors: Huimei Ma, Xiaofan Lu, Linan Zhang.
 % ============================================================
-u0 = 2*rand(n,1)-1;
-u0 = u0 + 0.0001*randn(n,1);
+u0 = 2*rand(N,1)-1;
+%u0 = u0 + sigma*randn(N,1);
 Nt = length(t);
-dt = t(2) - t(1);
+delta_t = t(2) - t(1);
 % Refine the interval.
 % t1,t2 -> t1,t11,t12,...,t19,t2
 np = 1000;
-ddt = dt/np;
+ddt = delta_t/np;
 
 % Initialize u and udot.
-d = n;
+d = N;
 nt = round((t(end)-t(1))/ddt)+1;
 tt = linspace(t(1),t(end),nt);
 
@@ -32,7 +32,7 @@ tt = linspace(t(1),t(end),nt);
 u = zeros(Nt,d);
 udot = zeros(Nt-1,d);
 u2 = u0;
-udot2 = dudt(u2,t(1),F);
+udot2 = dudt(u2,t(1),alpha);
 u(1,:) = u2; 
 udot(1,:) = udot2;
 % update u(2:nt) and udot(1:nt-1)
@@ -40,7 +40,7 @@ for ii=2:nt
     % ii = r + np * jj
     r = mod(ii,np); jj = floor(ii/np);
     u2 = u2 + udot2*ddt;
-    udot2 = dudt(u2, tt(ii), F);
+    udot2 = dudt(u2, tt(ii), alpha);
     if r==1
         u(jj+1,:) = u2;
         udot(jj+1,:) = udot2;
@@ -48,7 +48,7 @@ for ii=2:nt
 end
 
 % Compute numerical derivative.
-udot1 = dudtFD(u,dt);
+udot1 = dudtFD(u,delta_t);
     function udot = dudt(u,t_i,F)
         udot = f(t_i)*(circshift(u,-1)-circshift(u,2)) ...
             .* circshift(u,1) - u + F;
