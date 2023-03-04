@@ -15,7 +15,6 @@ function [u,udot,udot1] = Lorenz96Euler(N,t,f,alpha,sigma)
 % Authors: Huimei Ma, Xiaofan Lu, Linan Zhang.
 % ============================================================
 u0 = 2*rand(N,1)-1;
-%u0 = u0 + sigma*randn(N,1);
 Nt = length(t);
 delta_t = t(2) - t(1);
 % Refine the interval.

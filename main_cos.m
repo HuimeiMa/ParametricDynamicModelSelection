@@ -34,8 +34,8 @@ nb = 55;% size of the block
 
 p = 2; % degree of the basis element (p=2 or p=3)
 r = 5; % localization of the dictionary (radius of the restricted subset)
-[Phi,L] = Dictionary(U,p,r,indc);
-N = size(Phi,2);    
+[Amon,Aleg,L,Ind1,Ind20,Ind11,Ind300,Ind210,Ind120,Ind111] = legendre(U,p,r,indc);
+N = size(Aleg,2);   
 
 % support set
 supp = SupportSet(L, indc, 'lorenz96');
@@ -51,13 +51,17 @@ ctrue(supp(4),:) = -f(t); % u_{n-1} * u_{1,n}
 
 Cmon = zeros(N,N_t);
 for ii = 1:N_t
-    A = Phi((ii-1)*nb+1:ii*nb,:);
+    A = Aleg((ii-1)*nb+1:ii*nb,:);
     b1 = V((ii-1)*nb+1:ii*nb,:);
     b = Udot((ii-1)*nb+1:ii*nb,:);
    
     epsilon = 1.2 * norm(b-b1,2); % For testing purposes, in practice must be determined.
     tau = 1; mu = 1/2; MaxIt_1 = 1e5; tol = 1e-6; %Optimization Parameters
-    c = DouglasRachford(A,b1,epsilon,tau,mu,MaxIt_1,tol);
+    cleg = DouglasRachford(A,b1,sigma,tau,mu,MaxIt_1,tol);
+
+    c = leg2mon(cleg,p,Ind1,Ind20,Ind11,Ind300,Ind210,Ind120,Ind111);
+    %Optional Thresholding, See Proposition 3.5
+    c = c.*(abs(c)>1e-1);
     Cmon(:, ii) = c;
 end
 
@@ -114,55 +118,3 @@ fprintf('w4 = %f, %f, E(C_K) = %f, E(Gamma_k) = %f\n',w4(1),w4(6),norm(Cmon(supp
 E_C = norm(Cmon(:,tt_start_ind:tt_end_ind) - ctrue(:,tt_start_ind:tt_end_ind))/norm(ctrue(:,tt_start_ind:tt_end_ind))
 E_Gamma = norm(w-w_true)/norm(w_true)
 SNR = 10*log10(norm(u - mean(u))/norm(tilde_u-u))
-
-
-
-% cosXi = figure(2)
-% subplot(2,2,1)
-% plot(t(2:end-1),ctrue(supp(1),2:end-1),'color','black','LineWidth',1.5)
-% hold on 
-% plot(t(2:end-1),Cmon(supp(1),2:end-1),'*')
-% xlabel('t')
-% xline(0.004,'--');
-% xline(0.06,'--');
-% legend('True coefficients','Approximation','Location','southeast')
-% title('Coefficients of the term F as a function of t')
-% set(gca,'Xlim',[0,0.2],'YLim',[7.95,8.05]);
-% 
-% subplot(2,2,2)
-% plot(t(2:end-1),ctrue(supp(2),2:end-1),'color','black','LineWidth',1.5)
-% hold on 
-% plot(t(2:end-1),Cmon(supp(2),2:end-1),'*')
-% xlabel('t')
-% xline(0.004,'--');
-% xline(0.06,'--');
-% legend('True coefficients','Approximation','Location','southeast')
-% title('Coefficients of the term u_j as a function of t')
-% set(gca,'YLim',[-1.05,-0.95]);
-% 
-% subplot(2,2,3)
-% plot(t(2:end-1),ctrue(supp(3),2:end-1),'color','black','LineWidth',1.5)
-% hold on 
-% plot(t(2:end-1),Cmon(supp(3),2:end-1),'*')
-% xlabel('t')
-% xline(0.004,'--');
-% xline(0.06,'--');
-% legend('True coefficients','Approximation','Location','southeast')
-% title('Coefficients of the term u_{j-2}u_{j-1} as a function of t')
-% set(gca,'YLim',[-2.01,-1.98]);
-% 
-% subplot(2,2,4)
-% plot(t(2:end-1),ctrue(supp(4),2:end-1),'color','black','LineWidth',1.5)
-% hold on 
-% plot(t(2:end-1),Cmon(supp(4),2:end-1),'*')
-% xlabel('t')
-% xline(0.004,'--');
-% xline(0.06,'--');
-% legend('True coefficients','Approximation','Location','southeast')
-% title('Coefficients of the term u_{j+1}u_{j-1} as a function of t')
-% set(gca,'YLim',[1.97,2.00]);
-% 
-% fig = gcf;
-% fig.PaperUnits = 'inches';
-% fig.PaperPosition = [0 0 12 6];
-% print(cosXi,'-dpng','-r0');
