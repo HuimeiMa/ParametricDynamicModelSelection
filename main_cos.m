@@ -56,8 +56,8 @@ for ii = 1:N_t
     b = Udot((ii-1)*nb+1:ii*nb,:);
    
     epsilon = 1.2 * norm(b-b1,2); % For testing purposes, in practice must be determined.
-    tau = 1; mu = 1/2; MaxIt_1 = 1e5; tol = 1e-6; %Optimization Parameters
-    cleg = DouglasRachford(A,b1,sigma,tau,mu,MaxIt_1,tol);
+    gamma = 1; mu = 1/2; MaxIt_1 = 1e5; tol = 1e-6; %Optimization Parameters
+    cleg = DouglasRachford(A,b1,sigma,gamma,mu,MaxIt_1,tol);
 
     c = leg2mon(cleg,p,Ind1,Ind20,Ind11,Ind300,Ind210,Ind120,Ind111);
     %Optional Thresholding, See Proposition 3.5

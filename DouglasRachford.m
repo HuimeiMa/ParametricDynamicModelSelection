@@ -1,4 +1,4 @@
-function x = DouglasRachford(A, b, epsilon, tau, mu, MaxIt_1, tol)
+function x = DouglasRachford(A, b, epsilon, gamma, mu, MaxIt_1, tol)
 
 % ============================================================
 % Description:
@@ -59,7 +59,7 @@ end
 x = x./Acnorm;
 
     function [omega_new, x_new] = ProxG1(omega, x) % ell^1
-        x_new = max(abs(x)-tau, 0) .* sign(x); % ell^1   
+        x_new = max(abs(x)-gamma, 0) .* sign(x); % ell^1   
         omega_new = b + (omega-b) * min(epsilon/norm(omega-b,2),1);
     end
 
