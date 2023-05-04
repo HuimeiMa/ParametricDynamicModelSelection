@@ -12,6 +12,6 @@ Auxiliary functions:
  * SubsetMat.m (Indices used in cyclic permutation and restriction of the data)
  * SupportSet.m (Finds the support set of equation coefficients)
  * dudtFD.m (Velocity vector)  
- * stridge.m (Optimization routine) 
+ * STRidge.m (Optimization routine) 
 #### Authors: Huimei Ma, Xiaofan Lu, Linan Zhang  
 #### Data: September 20, 2022
