@@ -75,7 +75,7 @@ Psi= [ones(size(tt)) tt tt.^2 sin(tt) sin(2*tt) cos(tt) cos(2*tt) exp(tt) exp(2*
 % the library Psi is available:
 %Psi = [ones(size(tt)) tt tt.^2 tt.^3];
 [w,w_true] = ModelIdentification(tt_start_ind,tt_end_ind,alpha,Psi,Cmon,Ctrue,supp,'exp(t)');
-%ft_name = 'cos(t) or 'exp(t)'
+%ft_name = 'cos(t)' or 'exp(t)'
 
 
 %% print result
