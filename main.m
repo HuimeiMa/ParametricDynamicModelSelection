@@ -15,7 +15,7 @@ delta_t = 0.002;
 t = 0:delta_t:(100)*delta_t;
 N_t = length(t);
 sigma = 0e-06;% noise level
-f = @(t) 3*exp(t);%f(t)=-(1+cos(t)) or f(t)=3*exp(t)
+f = @(t) -(1+cos(t));%f(t)=-(1+cos(t)) or f(t)=3*exp(t)
 
 %Constructed data and velocity vector
 [u,udot,~] = Lorenz96Euler(N,t,f,alpha,sigma);
@@ -74,7 +74,7 @@ Psi= [ones(size(tt)) tt tt.^2 sin(tt) sin(2*tt) cos(tt) cos(2*tt) exp(tt) exp(2*
 %If the reader wants to learn the lower-order Taylor approximation of the governing equations, 
 % the library Psi is available:
 %Psi = [ones(size(tt)) tt tt.^2 tt.^3];
-[w,w_true] = ModelIdentification(tt_start_ind,tt_end_ind,alpha,Psi,Cmon,Ctrue,supp,'exp(t)');
+[w,w_true] = ModelIdentification(tt_start_ind,tt_end_ind,alpha,Psi,Cmon,Ctrue,supp,'cos(t)');
 %ft_name = 'cos(t)' or 'exp(t)'
 
 
@@ -83,3 +83,5 @@ Psi= [ones(size(tt)) tt tt.^2 sin(tt) sin(2*tt) cos(tt) cos(2*tt) exp(tt) exp(2*
 E_C = norm(Cmon(:,tt_start_ind:tt_end_ind) - Ctrue(:,tt_start_ind:tt_end_ind))/norm(Ctrue(:,tt_start_ind:tt_end_ind))
 E_Gamma = norm(w-w_true)/norm(w_true)
 SNR = 10*log10(norm(u - mean(u))/norm(tilde_u-u))
+
+save('lorenz_data.mat','delta_t','tilde_u')
